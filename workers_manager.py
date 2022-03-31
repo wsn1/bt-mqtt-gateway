@@ -73,7 +73,6 @@ class WorkersManager:
         for (worker_name, worker_config) in self._config["workers"].items():
             module_obj = importlib.import_module("workers.%s" % worker_name)
             klass = getattr(module_obj, "%sWorker" % worker_name.title())
-
             command_timeout = worker_config.get(
                 "command_timeout", self._command_timeout
             )
@@ -83,8 +82,16 @@ class WorkersManager:
             update_retries = worker_config.get(
                 "update_retries", self._update_retries
             )
+            args={}
+            for arg, value in worker_config["args"].items(): 
+                 print(arg,value)
+                 if(arg=="command_timeout"):
+                     pass
+                 else:
+                     args[arg]=value
             worker_obj = klass(
-                command_timeout, command_retries, update_retries, global_topic_prefix, **worker_config["args"]
+               #command_timeout, command_retries, update_retries, global_topic_prefix, **worker_config["args"]
+              command_timeout, command_retries, update_retries, global_topic_prefix,**args
             )
 
             if "sensor_config" in self._config and hasattr(worker_obj, "config"):

@@ -114,12 +114,20 @@ class lywsd03mmc:
         device.setDelegate(self)
 
     def processScanValue(self, data):
-        temperature = int(data[16:20], 16) / 10
-        humidity = int(data[20:22], 16)
-        battery = int(data[22:24], 16)
+        highbyte=int(data[18:20],16)
+        tmp=int(data[16:18],16)+int(data[18:20],16)*256
 
-        self._temperature = round(temperature, 1)
-        self._humidity = round(humidity)
+        if highbyte>0x80:
+            temperature = (tmp-65535)/100
+        else:
+            temperature = tmp/100
+
+        humidity = int(data[20:22],16)/10
+        tmp=int(data[22:24],16)+int(data[24:26],16)*256
+        battery = tmp/10000
+
+        self._temperature = round(temperature, 2)
+        self._humidity = round(humidity,1)
         self._battery = round(battery, 4)
 
     def handleNotification(self, handle, data):
