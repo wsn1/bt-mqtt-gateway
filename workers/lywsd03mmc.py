@@ -114,10 +114,10 @@ class lywsd03mmc:
         device.setDelegate(self)
 
     def processScanValue(self, data):
-        bdata=bytes.fromhex(data)
+        bdata=bytes.fromhex(data) #for pvvx fw 3.7 advertising format
         temperature = int.from_bytes(bdata[8:10], byteorder='little', signed=True) / 100
-        humidity = int.from_bytes(bdata[10:11], byteorder='little')/10
-        battery = int.from_bytes(bdata[11:13], byteorder='little') / 10000
+        humidity = int.from_bytes(bdata[10:12], byteorder='little')/100
+        battery = int.from_bytes(bdata[12:14], byteorder='little')/1000 
 
         self._temperature = round(temperature, 2)
         self._humidity = round(humidity,1)
